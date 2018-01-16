@@ -3,8 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import * as firebase from 'firebase';
 import RoomList  from './components/RoomList.js';
-
-
+import MessageList from './components/MessageList.js';
 
 var config = {
   apiKey: "AIzaSyCL6--NBUm0JYiTh4aXLYGSW6Wt80ParQs",
@@ -15,11 +14,23 @@ var config = {
   messagingSenderId: "332713763369"
 };
 firebase.initializeApp(config);
-
 var rootRef = firebase.database().ref();
 
 
 class App extends Component {
+  constructor (props){
+    super(props);
+
+    this.state = {
+      activeRoom: " "
+    }
+    this.activeRoom = this.activeRoom.bind(this);
+
+  }
+
+  activeRoom(room) {
+    this.setState({activeRoom:room})
+  }
 
   render() {
     return (
@@ -29,8 +40,10 @@ class App extends Component {
           <h1 className="App-title">Bloc Chat</h1>
         </header>
         <div className="App-intro">
-          <RoomList firebase={firebase} />
+          <RoomList firebase={firebase} activeRoom={this.activeRoom} />
         </div>
+        <MessageList firebase={firebase} />
+
       </div>
     );
   }
