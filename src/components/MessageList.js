@@ -53,6 +53,7 @@ createMessage(e) {
           {currentMessage}
         </ol>
         <form onSubmit={this.createMessage}>
+          Message Form:
           <input type='text' placeholder="Type message here" onChange={this._addMessageContent}/>
           <input type="submit" value="Submit"/>
         </form>

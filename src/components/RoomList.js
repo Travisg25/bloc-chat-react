@@ -23,6 +23,7 @@ componentDidMount() {
 }
 
 _roomNameChange (e) {
+  e.preventDefault();
   this.setState({name: e.target.value})
 }
 

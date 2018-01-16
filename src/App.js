@@ -42,7 +42,7 @@ class App extends Component {
         <div className="App-intro">
           <RoomList firebase={firebase} activeRoom={this.activeRoom} />
         </div>
-        <MessageList firebase={firebase} />
+        <MessageList firebase={firebase} activeRoom={this.activeRoom}/>
 
       </div>
     );
