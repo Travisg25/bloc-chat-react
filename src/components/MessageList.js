@@ -4,14 +4,12 @@ import * as firebase from 'firebase';
 class MessageList extends Component {
   constructor (props){
   super(props);
-
   this.state = {
     username: "",
     content: "",
     sentAt: "",
     roomId: "",
     messages: []
-    // activeRoom: ''
   };
   this.messagesRef = this.props.firebase.database().ref('messages');
   this.createMessage = this.createMessage.bind(this);
@@ -35,7 +33,7 @@ _addMessageContent (e) {
     {
     content: e.target.value,
     sentAt: firebase.database.ServerValue.TIMESTAMP,
-    roomId: this.props.setActiveRoom
+    roomId: this.props.activeRoom
   })
 }
 
@@ -45,40 +43,37 @@ createMessage(e) {
   this.messagesRef.push(
     {
       content: this.state.content,
-      // roomId: this.state.roomId,
-      sentAt: this.state.sentAt
+      sentAt: this.state.sentAt,
+      // roomId: this.state.roomId
     }
   );
    this.setState ({
    message: "",
    sentAt: "",
-   // roomId: "",
-   content: ""
+   roomId: "",
   })
   e.target.reset()
-
  };
 
-  render() {
-    let currentMessage = this.state.messages.map((message, index) => {
-      return (
-        <li key={message.key}>{message.content}</li>
-      )
-    })
-
-    return (
-      <div>
-        <ol>
-          {currentMessage}
-        </ol>
-        <form onSubmit={this.createMessage}>
-          Message Form:
-          <input type='text' placeholder="Type message here" onChange={this._addMessageContent}/>
-          <input type="submit" value="Submit"/>
-        </form>
-      </div>
-    );
-  }
+ render() {
+   let currentMessage = this.state.messages.map((message, index) => {
+     return (
+       <li key={message.key}>{message.content}</li>
+     )
+   })
+   return (
+     <div>
+       <ol>
+         {currentMessage}
+       </ol>
+       <form onSubmit={this.createMessage}>
+         Message Form:
+         <textarea type='text' placeholder="Type message here" onChange={this._addMessageContent}/>
+         <input type="submit" value="Submit"/>
+       </form>
+     </div>
+   );
+ }
 }
 
 

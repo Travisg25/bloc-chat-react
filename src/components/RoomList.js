@@ -4,11 +4,9 @@ import * as firebase from 'firebase';
 class RoomList extends Component {
   constructor (props){
   super(props);
-
   this.state = {
     rooms: [],
     name:'',
-    // roomId: ''
   };
   this.roomsRef = this.props.firebase.database().ref('rooms');
   this.createRoom = this.createRoom.bind(this);
@@ -36,17 +34,17 @@ createRoom (e) {
   e.preventDefault()
   this.roomsRef.push(
     {
-      name: this.state.name,
+      name: this.state.name
       // roomId: this.state.roomId
     }
   );
   this.setState({ name: "" })
-  e.target.reset()
+  // e.target.reset()
 }
 
   render() {
     let roomlist = this.state.rooms.map((room, index) =>
-      <li key={room.key} onClick={ (e) => {this.props.setActiveRoom(room)} }>{room.name}</li>
+      <li key={room.key} onClick={ (e) => {this.selectRoom(room,e)} }>{room.name}</li>
     );
 
 // this.props.setActiveRoom.bind(roomId)}
@@ -56,7 +54,7 @@ createRoom (e) {
         <ul>{roomlist}</ul>
         <form onSubmit={this.createRoom}>
           Add a room:
-          <input type="text" placeholder="Chatroom Name" onChange={this._roomNameChange} />
+          <input type="text" value={this.state.name} placeholder="Chatroom Name" onChange={this._roomNameChange} />
           <input type="submit" value="Submit"/>
         </form>
       </div>

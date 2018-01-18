@@ -20,7 +20,6 @@ var rootRef = firebase.database().ref();
 class App extends Component {
   constructor (props){
     super(props);
-
     this.state = {
       activeRoom: " "
     }
@@ -33,6 +32,7 @@ class App extends Component {
   }
 
   render() {
+
     return (
       <div className="App">
         <header className="App-header">
@@ -42,7 +42,8 @@ class App extends Component {
         <div className="App-intro">
           <RoomList firebase={firebase} activeRoom={this.activeRoom} setActiveRoom={this.setActiveRoom}/>
         </div>
-        <MessageList firebase={firebase} activeRoom={this.state.activeRoom} setActiveRoom={this.setActiveRoom}/>
+
+        <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} />
 
       </div>
     );
