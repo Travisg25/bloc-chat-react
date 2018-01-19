@@ -6,57 +6,62 @@ class RoomList extends Component {
   super(props);
   this.state = {
     rooms: [],
-    name:'',
+    name:''
   };
   this.roomsRef = this.props.firebase.database().ref('rooms');
   this.createRoom = this.createRoom.bind(this);
-  this._roomNameChange = this._roomNameChange.bind(this);
+  this._roomChange = this._roomChange.bind(this);
 }
 
 componentDidMount() {
-  this.roomsRef.on('child_added', snapshot => {
-    const room = snapshot.val();
-    room.key = snapshot.key;
-    this.setState({ rooms: this.state.rooms.concat( room ) })
+  this.roomsRef.on('value', snapshot => {
+    const roomChanges = [];
+    snapshot.forEach((room) => {
+      roomChanges.push({
+        key: room.key,
+        name: room.val().name
+      });
+    });
+    this.setState({ rooms: roomChanges})
   });
 }
 
-_roomNameChange (e) {
+_roomChange (e) {
   e.preventDefault();
   this.setState({name: e.target.value})
-}
-
-selectRoom(room) {
-  this.props.setActiveRoom(room);
 }
 
 createRoom (e) {
   e.preventDefault()
   this.roomsRef.push(
     {
-      name: this.state.name
-      // roomId: this.state.roomId
+      name: this.state.name,
     }
   );
   this.setState({ name: "" })
-  // e.target.reset()
+}
+
+selectRoom(room) {
+  this.props.setActiveRoom(room);
 }
 
   render() {
     let roomlist = this.state.rooms.map((room, index) =>
       <li key={room.key} onClick={ (e) => {this.selectRoom(room,e)} }>{room.name}</li>
     );
+    let roomForm = (
 
-// this.props.setActiveRoom.bind(roomId)}
+        <form onSubmit={this.createRoom}>
+          <h2>Add a room:</h2>
+          <input type="text" value={this.state.name} placeholder="Type room name" onChange={this._roomChange} />
+          <input type="submit" value="Submit"/>
+        </form>
 
+      )
     return (
       <div>
         <ul>{roomlist}</ul>
-        <form onSubmit={this.createRoom}>
-          Add a room:
-          <input type="text" value={this.state.name} placeholder="Chatroom Name" onChange={this._roomNameChange} />
-          <input type="submit" value="Submit"/>
-        </form>
+        <ul>{roomForm}</ul>
       </div>
     );
   }

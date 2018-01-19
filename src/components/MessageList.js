@@ -18,14 +18,12 @@ class MessageList extends Component {
 };
 
 componentDidMount() {
-  this.messagesRef.orderByChild('roomId').on('child_added', snapshot => {
+  this.messagesRef.on('child_added', snapshot => {
     const message = snapshot.val();
     message.key = snapshot.key;
     this.setState({ messages: this.state.messages.concat( message ) })
   });
 }
-
-
 
 _addMessageContent (e) {
   e.preventDefault();
@@ -37,40 +35,55 @@ _addMessageContent (e) {
   })
 }
 
-
 createMessage(e) {
   e.preventDefault();
   this.messagesRef.push(
     {
       content: this.state.content,
       sentAt: this.state.sentAt,
-      // roomId: this.state.roomId
+      roomId: this.state.roomId
     }
   );
    this.setState ({
-   message: "",
-   sentAt: "",
-   roomId: "",
+     message: "",
+     sentAt: "",
+     roomId: "",
   })
   e.target.reset()
  };
 
  render() {
-   let currentMessage = this.state.messages.map((message, index) => {
-     return (
-       <li key={message.key}>{message.content}</li>
-     )
-   })
-   return (
-     <div>
-       <ol>
-         {currentMessage}
-       </ol>
+
+   let activeRoom = this.props.activeRoom
+
+   let currentMessages = (
+     this.state.messages.map((message)=> {
+       if (message.roomId === activeRoom) {
+         return <ol key={message.key}>{message.content}</ol>
+       }
+       return null;
+     })
+   );
+
+   let messageWindow= (
+
        <form onSubmit={this.createMessage}>
-         Message Form:
+         <h3>Message Form</h3>
          <textarea type='text' placeholder="Type message here" onChange={this._addMessageContent}/>
          <input type="submit" value="Submit"/>
        </form>
+
+   )
+   return (
+     <div>
+       <div>
+          {messageWindow}
+      </div>
+       <div>
+         {currentMessages}
+       </div>
+
+
      </div>
    );
  }
