@@ -31,7 +31,9 @@ _addMessageContent (e) {
     {
     content: e.target.value,
     sentAt: firebase.database.ServerValue.TIMESTAMP,
-    roomId: this.props.activeRoom
+    roomId: this.props.activeRoom,
+    username: this.props.currentUser
+
   })
 }
 
@@ -41,7 +43,9 @@ createMessage(e) {
     {
       content: this.state.content,
       sentAt: this.state.sentAt,
-      roomId: this.state.roomId
+      roomId: this.state.roomId,
+      username: this.props.currentUser
+
     }
   );
    this.setState ({
