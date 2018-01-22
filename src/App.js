@@ -32,6 +32,7 @@ class App extends Component {
 
 setActiveRoom(room) {
   this.setState({ activeRoom: room });
+  
 }
 
 setUser(user) {
@@ -45,7 +46,7 @@ setUser(user) {
     return (
       <div>
         <User firebase={firebase} setUser={this.setUser} currentUser={currentUser}/>
-        <h1>{this.state.activeRoom.name || "Choose a room or Create one"}</h1>
+        <h1>{this.state.activeRoom.name  || "Choose a room or Create one"}</h1>
         <RoomList firebase={firebase} setActiveRoom={this.setActiveRoom} />
         { showMessages ?
           <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} currentUser={currentUser} />

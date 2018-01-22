@@ -14,6 +14,8 @@ class MessageList extends Component {
   this.messagesRef = this.props.firebase.database().ref('messages');
   this.createMessage = this.createMessage.bind(this);
   this._addMessageContent = this._addMessageContent.bind(this);
+  this.deleteMessage = this.deleteMessage.bind(this);
+
 
 };
 
@@ -56,6 +58,13 @@ createMessage(e) {
   e.target.reset()
  };
 
+ deleteMessage (messagekey) {
+   let currentMessage = this.props.firebase.database().ref('messages/' + messagekey);
+   currentMessage.remove();
+   console.log('delete clicked')
+
+ }
+
  render() {
 
    let activeRoom = this.props.activeRoom
@@ -63,7 +72,10 @@ createMessage(e) {
    let currentMessages = (
      this.state.messages.map((message)=> {
        if (message.roomId === activeRoom) {
-         return <ol key={message.key}>{message.content}</ol>
+         return <ol key={message.key}>{message.content}
+         <button onClick= { (e) => {this.deleteMessage(message.key)} }>Delete</button>
+
+         </ol>
        }
        return null;
      })

@@ -10,6 +10,8 @@ class RoomList extends Component {
   };
   this.roomsRef = this.props.firebase.database().ref('rooms');
   this.createRoom = this.createRoom.bind(this);
+  this.deleteRoom = this.deleteRoom.bind(this);
+  this.editRoom = this.editRoom.bind(this);
   this._roomChange = this._roomChange.bind(this);
 }
 
@@ -41,16 +43,28 @@ createRoom (e) {
   this.setState({ name: "" })
 }
 
+deleteRoom (roomkey) {
+  let room = this.props.firebase.database().ref('rooms/' + roomkey);
+  room.remove();
+}
+
+editRoom (roomkey) {
+  let room = this.props.firebase.database().ref('rooms/' + roomkey);
+  console.log('edit clicked')
+}
+
 selectRoom(room) {
   this.props.setActiveRoom(room);
 }
 
   render() {
     let roomlist = this.state.rooms.map((room, index) =>
-      <li key={room.key} onClick={ (e) => {this.selectRoom(room,e)} }>{room.name}</li>
+      <li key={room.key} onClick={ (e) => {this.selectRoom(room,e)} }>{room.name}
+        <button onClick= { (e) => {this.deleteRoom(room.key)} }>Delete</button>
+        <button onClick= { (e) => {this.editRoom(room.key)} }>Edit</button>
+      </li>
     );
     let roomForm = (
-
         <form onSubmit={this.createRoom}>
           <h2>Add a room:</h2>
           <input type="text" value={this.state.name} placeholder="Type room name" onChange={this._roomChange} />
