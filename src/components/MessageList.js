@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
+import '.././styles/messageList.css';
+
 
 class MessageList extends Component {
   constructor (props){
@@ -85,6 +87,7 @@ createMessage(e) {
 
 
      </div>
+
    );
  }
 }
