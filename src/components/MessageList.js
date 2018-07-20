@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import '.././styles/messageList.css';
+import React, { Component } from 'react';
+
 
 
 class MessageList extends Component {
