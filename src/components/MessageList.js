@@ -86,10 +86,7 @@ createMessage(e) {
        <div>
          {currentMessages}
        </div>
-
-
      </div>
-
    );
  }
 }
