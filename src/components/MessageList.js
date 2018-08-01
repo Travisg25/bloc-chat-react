@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import '.././styles/messageList.css';
-import React, { Component } from 'react';
 
 
 
@@ -57,9 +56,7 @@ createMessage(e) {
  };
 
  render() {
-
    let activeRoom = this.props.activeRoom
-
    let currentMessages = (
      this.state.messages.map((message)=> {
        if (message.roomId === activeRoom) {
@@ -68,24 +65,19 @@ createMessage(e) {
        return null;
      })
    );
-
    let messageWindow= (
-
-       <form onSubmit={this.createMessage}>
-         <h3>Message Form</h3>
-         <textarea type='text' placeholder="Type message here" onChange={this._addMessageContent}/>
-         <input type="submit" value="Submit"/>
-       </form>
-
+    <div id="messageWindow">
+      <form onSubmit={this.createMessage}>
+        <h3>Message Form</h3>
+        <textarea type='text' placeholder="Type message here" onChange={this._addMessageContent}/>
+        <input type="submit" value="Send"/>
+      </form>
+    </div>
    )
    return (
      <div>
-       <div>
-          {messageWindow}
-      </div>
-       <div>
-         {currentMessages}
-       </div>
+       {messageWindow}
+       {currentMessages}
      </div>
    );
  }
