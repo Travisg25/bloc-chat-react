@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import '.././styles/messageList.css';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import Moment from 'react-moment';
+import {Col, FormGroup, InputGroup, FormControl, Button}  from 'react-bootstrap';
+
 
 
 
@@ -34,7 +38,8 @@ _addMessageContent (e) {
     {
     content: e.target.value,
     sentAt: firebase.database.ServerValue.TIMESTAMP,
-    roomId: this.props.activeRoom
+    roomId: this.props.activeRoom,
+    username: this.props.currentUser
   })
 }
 
@@ -44,7 +49,9 @@ createMessage(e) {
     {
       content: this.state.content,
       sentAt: this.state.sentAt,
-      roomId: this.state.roomId
+      roomId: this.state.roomId,
+      username: this.props.currentUser
+
     }
   );
    this.setState ({
