@@ -5,19 +5,16 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Moment from 'react-moment';
 import {Col, FormGroup, InputGroup, FormControl, Button}  from 'react-bootstrap';
 
-
-
-
 class MessageList extends Component {
   constructor (props){
   super(props);
-  this.state = {
-    username: "",
-    content: "",
-    sentAt: "",
-    roomId: "",
-    messages: []
-  };
+    this.state = {
+      username: "",
+      content: "",
+      sentAt: "",
+      roomId: "",
+      messages: []
+    };
   this.messagesRef = this.props.firebase.database().ref('messages');
   this.createMessage = this.createMessage.bind(this);
   this._addMessageContent = this._addMessageContent.bind(this);
@@ -67,7 +64,7 @@ createMessage(e) {
    let currentMessages = (
      this.state.messages.map((message)=> {
        if (message.roomId === activeRoom) {
-         return <ol key={message.key}>{message.content}</ol>
+         return <ol key={message.key}>{message.username}: {message.content}</ol>
        }
        return null;
      })

@@ -46,18 +46,22 @@ selectRoom(room) {
   this.props.setActiveRoom(room);
 }
 
+deleteRoom(roomKey) {
+  let room = this.props.firebase.database().ref("rooms/" + roomKey);
+  room.remove();
+}
+
   render() {
     let roomlist = this.state.rooms.map((room, index) =>
-      <li key={room.key} onClick={ (e) => {this.selectRoom(room,e)} }>{room.name}</li>
+      <li key={room.key} onClick={ (e) => {this.selectRoom(room,e)} }>{room.name}         <button onClick={() => this.deleteRoom(room.key)}>Remove</button>
+      </li>
     );
     let roomForm = (
-
-        <form onSubmit={this.createRoom}>
-          <h2>Add a room:</h2>
-          <input type="text" value={this.state.name} placeholder="Type room name" onChange={this._roomChange} />
-          <input type="submit" value="Submit"/>
-        </form>
-
+      <form onSubmit={this.createRoom}>
+        <h2>Add a room:</h2>
+        <input type="text" value={this.state.name} placeholder="Type room name" onChange={this._roomChange} />
+        <input type="submit" value="Submit"/>
+      </form>
       )
     return (
       <div>
