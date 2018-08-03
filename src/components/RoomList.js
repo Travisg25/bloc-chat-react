@@ -7,16 +7,19 @@ class RoomList extends Component {
   super(props);
   this.state = {
     rooms: [],
-    name:''
+    name:'',
+    toEdit: ''
   };
   this.roomsRef = this.props.firebase.database().ref('rooms');
   this.createRoom = this.createRoom.bind(this);
   this._roomChange = this._roomChange.bind(this);
+  this.editRoom = this.editRoom.bind(this);
+  this.updateRoom = this.updateRoom.bind(this);
 }
 
 componentDidMount() {
   this.roomsRef.on('value', snapshot => {
-    const roomChanges = [];
+    let roomChanges = [];
     snapshot.forEach((room) => {
       roomChanges.push({
         key: room.key,
@@ -51,9 +54,35 @@ deleteRoom(roomKey) {
   room.remove();
 }
 
+editRoom(room) {
+  let editRoom = (
+    <form onSubmit={this.updateRoom}>
+      <input type="text" defaultValue={room.title} ref={(input) => this.input = input}/>
+      <input type="submit" value="Update" />
+      <button type="button" onClick={() => this.setState({toEdit: ""})}>Cancel</button>
+    </form>
+  );
+  return editRoom;
+}
+updateRoom(e) {
+  e.preventDefault();
+  let updates = {[this.state.toEdit + "/name"]: this.input.value};
+  this.roomsRef.update(updates);
+  this.setState({ toEdit: ""});
+}
+
   render() {
     let roomlist = this.state.rooms.map((room, index) =>
-      <li key={room.key} onClick={ (e) => {this.selectRoom(room,e)} }>{room.name}         <button onClick={() => this.deleteRoom(room.key)}>Remove</button>
+    <li key={room.key}>
+      {this.state.toEdit === room.key ?
+        this.editRoom(room)
+      :
+      <div>
+        <h3 onClick={(e) => this.selectRoom(room, e)}>{room.name}</h3>
+        <button onClick={() => this.deleteRoom(room.key)}>Remove</button>
+        <button onClick={() => this.setState({toEdit: room.key})}>Edit</button>
+      </div>
+      }
       </li>
     );
     let roomForm = (
