@@ -13,12 +13,14 @@ class MessageList extends Component {
       content: "",
       sentAt: "",
       roomId: "",
-      messages: []
+      messages: [],
+      toEdit: ''
     };
   this.messagesRef = this.props.firebase.database().ref('messages');
   this.createMessage = this.createMessage.bind(this);
   this._addMessageContent = this._addMessageContent.bind(this);
-
+  this.editMessage =  this.editMessage.bind(this);
+  this.updateMessage = this.updateMessage.bind(this);
 };
 
 componentDidMount() {
@@ -59,15 +61,40 @@ createMessage(e) {
   e.target.reset()
  };
 
+ editMessage(message) {
+   let editMessage= (
+     <form onSubmit={this.updateMessage}>
+       <input type="text" defaultValue={message.content} ref={(input) => this.input = input}/>
+       <input type="submit" value="Update" />
+       <button type="button" onClick={() => this.setState({toEdit: ""})}>Cancel</button>
+     </form>
+   );
+   return editMessage;
+ }
+  updateMessage(e) {
+   e.preventDefault();
+   let messagesRef = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/messages");
+   let updates = {[this.state.toEdit + "/content"]: this.input.value};
+   messagesRef.update(updates);
+   this.setState({ toEdit: ""});
+ }
+
  render() {
    let activeRoom = this.props.activeRoom
    let currentMessages = (
-     this.state.messages.map((message)=> {
-       if (message.roomId === activeRoom) {
-         return <ol key={message.key}>{message.username}: {message.content}</ol>
-       }
-       return null;
-     })
+     this.state.messages.map((message) =>
+       <li key={message.key}>
+         <h2>{message.username}:</h2>
+         {(this.state.toEdit === message.key) && (this.props.user === message.username) ?
+           this.editMessage(message)
+           :
+           <div>
+             <h3>{message.content}</h3>
+             <button onClick={() => this.setState({toEdit: message.key})}>Edit</button>
+           </div>
+         }
+       </li>
+     )
    );
    let messageWindow= (
     <div id="messageWindow">
