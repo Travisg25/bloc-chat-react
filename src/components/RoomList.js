@@ -64,9 +64,9 @@ editRoom(room) {
   );
   return editRoom;
 }
-updateRoom(e) {
+ updateRoom(e) {
   e.preventDefault();
-  let updates = {[this.state.toEdit + "/name"]: this.input.value};
+  const updates = {[this.state.toEdit + "/name"]: this.input.value};
   this.roomsRef.update(updates);
   this.setState({ toEdit: ""});
 }

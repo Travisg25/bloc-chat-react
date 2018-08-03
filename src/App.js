@@ -43,17 +43,44 @@ setUser(user) {
     let currentUser = this.state.user === null ? "Guest" : this.state.user.displayName;
 
     return (
-      <div>
-        <User firebase={firebase} setUser={this.setUser} currentUser={currentUser}/>
-        <h1>{this.state.activeRoom.name || "Choose a room or Create one"}</h1>
-        <RoomList firebase={firebase} setActiveRoom={this.setActiveRoom} />
+      <Grid Fluid>
+        <Row className="show-grid main-row">
+          <Col xs={3}>
+            <Navbar fluid>
+              
+                <h1>Bloc Chat</h1>
+
+              <Navbar.Collapse>
+                <Col xs={12}>
+                  <h2>{this.state.activeRoom.name || "Choose a room or Create one"}</h2>
+                </Col>
+                <RoomList firebase={firebase} setActiveRoom={this.setActiveRoom} />
+              </Navbar.Collapse>
+            </Navbar>
+          </Col>
+          <Col xs={9}>
+            <User firebase={firebase} setUser={this.setUser} currentUser={currentUser}/>
         { showMessages ?
           <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} currentUser={currentUser} />
         : null
         }
-      </div>
+        </Col>
+        </Row>
+      </Grid>
+
+
     );
   }
 }
 
 export default App;
+
+// <div>
+//   <User firebase={firebase} setUser={this.setUser} currentUser={currentUser}/>
+//   <h1>{this.state.activeRoom.name || "Choose a room or Create one"}</h1>
+//   <RoomList firebase={firebase} setActiveRoom={this.setActiveRoom} />
+//   { showMessages ?
+//     <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} currentUser={currentUser} />
+//   : null
+//   }
+// </div>
