@@ -43,13 +43,13 @@ setUser(user) {
     let currentUser = this.state.user === null ? "Guest" : this.state.user.displayName;
 
     return (
-      <Grid Fluid>
-        <Row className="show-grid main-row">
-          <Col xs={3}>
+      <Grid fluid className= "main">
+        <Row className="showGrid mainRow">
+          <Col xs={12} sm={3} className="sideNav">
             <Navbar fluid>
                 <h1>Bloc Chat</h1>
               <Navbar.Collapse>
-                <Col xs={12}>
+                <Col xs={12} className="roomSection">
                   <h2>{this.state.activeRoom.name || "Choose a room or Create one"}</h2>
                 </Col>
                 <RoomList
@@ -60,7 +60,7 @@ setUser(user) {
                  </Navbar.Collapse>
             </Navbar>
           </Col>
-          <Col xs={9}>
+          <Col sm={9} xs={12} className="messageSection">
             <User firebase={firebase} setUser={this.setUser} currentUser={currentUser}/>
         { showMessages ?
           <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} currentUser={currentUser} />

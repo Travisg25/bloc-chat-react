@@ -12,31 +12,53 @@ textarea {
   text-align: center;
 }
 
-.message-section {
-  background-color: #70E4EF;
+.messageSection {
+  background-color: orange;
 }
 
-@media (min-width: 768px) {
-  .main-row {
-    min-height: 100%;
-    display: flex;
-  }
-
-
-  .message-section {
-    display: flex;
-    flex-direction: column;
-  }
-
+.navbarDefault {
+  background: none;
+  border: none;
 }
 
-@media (max-width: 768px) {
-  .main {
-    background-color: #efe7d1;
-  }
+ @media (min-width: 768px) {
+   .mainRow {
+     min-height: 100%;
+     display: flex;
+   }
 
-  .sidenav {
-   overflow-x: hidden;
-  }
+   .sideNav {
+     background-color: purple;
+     display: flex;
+     flex-direction: column;
+   }
 
-}
+   .messageSection {
+     display: flex;
+     flex-direction: column;
+   }
+
+   .navbarDefault {
+     position: fixed;
+     left: 0;
+   }
+ }
+
+ @media (max-width: 767px) {
+   .main {
+    background-color: pink;
+   }
+
+   .sideNav .navbar {
+     position: fixed;
+     z-index: 2;
+     top: 0;
+     right: 0;
+     left: 0;
+     margin: 0;
+   }
+
+   .navbarDefault .navbarHeader, .navbarDefault .navbarCollapse {
+     background-color: purple;
+   }
+ }

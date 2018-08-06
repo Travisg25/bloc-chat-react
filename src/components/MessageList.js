@@ -3,7 +3,7 @@ import * as firebase from 'firebase';
 import '.././styles/messageList.css';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Moment from 'react-moment';
-import {Col, FormGroup, InputGroup, FormControl, Button}  from 'react-bootstrap';
+import {Col, Row, FormGroup, InputGroup, FormControl, Button}  from 'react-bootstrap';
 
 class MessageList extends Component {
   constructor (props){
@@ -85,36 +85,35 @@ createMessage(e) {
      this.state.messages.map((message)=> {
        if (message.roomId === activeRoom) {
          return<ol key={message.key}>
-
-         <h3>{message.username}</h3> - says:
+         <h3>{message.username + " -says: "}</h3>
          {" " + message.content}
-
            <button onClick={() => this.setState({toEdit: message.key})}>Edit</button>
-
          </ol>
-
        }
        return null;
      })
-
    );
 
-
-
    let messageWindow= (
-    <div id="messageWindow">
-      <form onSubmit={this.createMessage}>
-        <h3>Message Form</h3>
-        <textarea type='text' placeholder="Type message here" onChange={this._addMessageContent}/>
-        <input type="submit" value="Send"/>
-      </form>
-    </div>
+
+  <form onSubmit={this.createMessage}>
+    <input type="text" value={this.state.content} placeholder="Enter Message" onChange={this._addMessageContent}/>
+    <input type="submit" value="Send" />
+  </form>
    )
    return (
-     <div>
-       {messageWindow}
-       {currentMessages}
-     </div>
+     <Row className="showGrid messageListBar">
+       <Col xs={12} className="messageListBar">
+          <Row className="showGrid">
+           <Col xs={12} className="messageList">
+             <ul>{currentMessages}</ul>
+           </Col>
+         </Row>
+          <Row className="showGrid">
+           <Col xs={12} id="messageWindow">{messageWindow}</Col>
+         </Row>
+        </Col>
+     </Row>
    );
  }
 }

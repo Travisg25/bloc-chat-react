@@ -7,6 +7,7 @@ class RoomList extends Component {
   super(props);
   this.state = {
     rooms: [],
+    creator: "",
     name:'',
     toEdit: ''
   };
@@ -23,7 +24,8 @@ componentDidMount() {
     snapshot.forEach((room) => {
       roomChanges.push({
         key: room.key,
-        name: room.val().name
+        creator: room.val().creator,
+        name: room.val().name,
       });
     });
     this.setState({ rooms: roomChanges})
@@ -32,7 +34,10 @@ componentDidMount() {
 
 _roomChange (e) {
   e.preventDefault();
-  this.setState({name: e.target.value})
+  this.setState({
+    name: e.target.value,
+    creator: e.target.value
+  });
 }
 
 createRoom (e) {
@@ -40,9 +45,10 @@ createRoom (e) {
   this.roomsRef.push(
     {
       name: this.state.name,
+      creator: this.state.creator
     }
   );
-  this.setState({ name: "" })
+  this.setState({ name: "", creator: "" })
 }
 
 selectRoom(room) {
@@ -57,7 +63,7 @@ deleteRoom(roomKey) {
 editRoom(room) {
   let editRoom = (
     <form onSubmit={this.updateRoom}>
-      <input type="text" defaultValue={room.title} ref={(input) => this.input = input}/>
+      <input type="text" defaultValue={room.name} ref={(input) => this.input = input}/>
       <input type="submit" value="Update" />
       <button type="button" onClick={() => this.setState({toEdit: ""})}>Cancel</button>
     </form>
@@ -79,9 +85,14 @@ editRoom(room) {
       :
       <div>
         <h3 onClick={(e) => this.selectRoom(room, e)}>{room.name}</h3>
-        <button onClick={() => this.deleteRoom(room.key)}>Remove</button>
-        <button onClick={() => this.setState({toEdit: room.key})}>Edit</button>
-      </div>
+        {this.props.user === room.creator ?
+          <div>
+            <button onClick={() => this.deleteRoom(room.key)}>Remove</button>
+            <button onClick={() => this.setState({toEdit: room.key})}>Edit</button>
+          </div>
+        : null
+        }
+        </div>
       }
       </li>
     );

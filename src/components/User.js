@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import '.././styles/user.css';
+import {Col, Row, FormGroup, InputGroup, FormControl, Button}  from 'react-bootstrap';
+
 
 
 class User extends Component {
@@ -28,12 +30,16 @@ class User extends Component {
 }
   render() {
      return (
-      <div>
-        <h2>{this.props.currentUser} is signed in!</h2>
-        <p> {this.props.currentUser === 'Guest' ? "Please sign in" : "You're signed in"}</p>
-        <button onClick={this.signIn}>Sign In</button>
-        <button onClick={this.signOut}>Sign Out</button>
-       </div>
+       <Row className="showGrid">
+        <Col xs={12} className="loginSection">
+          <h3>Welcome, {this.props.currentUser}</h3>
+          { this.props.currentUser === "Guest" ?
+            <button onClick={this.signIn}>Sign In</button>
+            :
+            <button onClick={this.signOut}>Sign Out</button>
+          }
+        </Col>
+      </Row>
     )
   }
  }

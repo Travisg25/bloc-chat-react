@@ -1,3 +1,11 @@
 #messageWindow {
-
+  background-color: lightblue;
+  position: fixed;
+  bottom: 0;
+  height: 5rem;
+  z-index: 1;
+}
+ .messageList {
+  padding-top: 6rem;
+  padding-bottom: 5rem;
 }
