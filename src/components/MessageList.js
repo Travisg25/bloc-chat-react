@@ -82,20 +82,25 @@ createMessage(e) {
  render() {
    let activeRoom = this.props.activeRoom
    let currentMessages = (
-     this.state.messages.map((message) =>
-       <li key={message.key}>
-         <h2>{message.username}:</h2>
-         {(this.state.toEdit === message.key) && (this.props.user === message.username) ?
-           this.editMessage(message)
-           :
-           <div>
-             <h3>{message.content}</h3>
-             <button onClick={() => this.setState({toEdit: message.key})}>Edit</button>
-           </div>
-         }
-       </li>
-     )
+     this.state.messages.map((message)=> {
+       if (message.roomId === activeRoom) {
+         return<ol key={message.key}>
+
+         <h3>{message.username}</h3> - says:
+         {" " + message.content}
+
+           <button onClick={() => this.setState({toEdit: message.key})}>Edit</button>
+
+         </ol>
+
+       }
+       return null;
+     })
+
    );
+
+
+
    let messageWindow= (
     <div id="messageWindow">
       <form onSubmit={this.createMessage}>

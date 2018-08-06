@@ -24,7 +24,7 @@ class App extends Component {
     super(props);
     this.state = {
       activeRoom: "",
-      user: ""
+      user: null
     };
     this.setActiveRoom = this.setActiveRoom.bind(this);
     this.setUser = this.setUser.bind(this);
@@ -47,15 +47,17 @@ setUser(user) {
         <Row className="show-grid main-row">
           <Col xs={3}>
             <Navbar fluid>
-              
                 <h1>Bloc Chat</h1>
-
               <Navbar.Collapse>
                 <Col xs={12}>
                   <h2>{this.state.activeRoom.name || "Choose a room or Create one"}</h2>
                 </Col>
-                <RoomList firebase={firebase} setActiveRoom={this.setActiveRoom} />
-              </Navbar.Collapse>
+                <RoomList
+                   firebase={firebase}
+                   setActiveRoom={this.setActiveRoom}
+                   user={this.state.user}
+                 />
+                 </Navbar.Collapse>
             </Navbar>
           </Col>
           <Col xs={9}>
