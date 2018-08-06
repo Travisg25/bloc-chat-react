@@ -3,6 +3,7 @@ import './App.css';
 import * as firebase from 'firebase';
 import RoomList  from './components/RoomList.js';
 import MessageList from './components/MessageList.js';
+import RoomParticipants from './components/RoomParticipants.js';
 import User  from './components/User.js';
 import {Grid, Row, Col, Navbar}  from 'react-bootstrap';
 

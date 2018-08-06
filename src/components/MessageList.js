@@ -14,13 +14,15 @@ class MessageList extends Component {
       sentAt: "",
       roomId: "",
       messages: [],
-      toEdit: ''
+      toEdit: '',
+      isTyping: false
     };
   this.messagesRef = this.props.firebase.database().ref('messages');
   this.createMessage = this.createMessage.bind(this);
   this._addMessageContent = this._addMessageContent.bind(this);
   this.editMessage =  this.editMessage.bind(this);
   this.updateMessage = this.updateMessage.bind(this);
+  this._keyDown = this._keyDown.bind(this);
 };
 
 componentDidMount() {
@@ -29,6 +31,13 @@ componentDidMount() {
     message.key = snapshot.key;
     this.setState({ messages: this.state.messages.concat( message ) })
   });
+}
+
+_keyDown(e) {
+  this.setState({isTyping: true});
+  setTimeout(() => {
+    this.setState({isTyping: false});
+  }, 2000);
 }
 
 _addMessageContent (e) {
@@ -57,6 +66,7 @@ createMessage(e) {
      message: "",
      sentAt: "",
      roomId: "",
+     isTyping: false
   })
   e.target.reset()
  };
@@ -80,27 +90,33 @@ createMessage(e) {
  }
 
  render() {
-   let activeRoom = this.props.activeRoom
-   let currentMessages = (
-     this.state.messages.map((message)=> {
-       if (message.roomId === activeRoom) {
-         return<ol key={message.key}>
-         <h3>{message.username + " -says: "}</h3>
-         {" " + message.content}
-           <button onClick={() => this.setState({toEdit: message.key})}>Edit</button>
-         </ol>
-       }
-       return null;
-     })
-   );
+  let userTyping = this.state.isTyping;
+  let activeRoom = this.props.activeRoom
+  let currentMessages = (
+    this.state.messages.map((message)=> {
+      if (message.roomId === activeRoom) {
+        return<ol key={message.key}>
+        <h3>{message.username + " -says: "}<span><small>{message.username === this.props.user && userTyping ? " is typing..." : ":"}</small></span></h3>
+        {" " + message.content}
+        <button onClick={() => this.setState({toEdit: message.key})}>Edit</button>
+      </ol>
+     }
+     return null;
+   })
+  );
 
    let messageWindow= (
-
-  <form onSubmit={this.createMessage}>
-    <input type="text" value={this.state.content} placeholder="Enter Message" onChange={this._addMessageContent}/>
-    <input type="submit" value="Send" />
-  </form>
-   )
+    <form onSubmit={this.createMessage}>
+      <input
+      type="text"
+      value={this.state.content}
+      placeholder="Enter Message"
+      onChange={this._addMessageContent}
+      onKeyDown={this._keyDown}
+      />
+      <input type="submit" value="Send" />
+    </form>
+    )
    return (
      <Row className="showGrid messageListBar">
        <Col xs={12} className="messageListBar">
