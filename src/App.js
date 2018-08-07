@@ -40,6 +40,11 @@ setUser(user) {
 }
 
   render() {
+    let roomParticipants = <RoomParticipants
+      firebase = {firebase}
+      activeRoom = {this.activeRoom}
+      user= {this.state.user}
+    />
     let showMessages = this.state.activeRoom;
     let currentUser = this.state.user === null ? "Guest" : this.state.user.displayName;
 
@@ -52,6 +57,7 @@ setUser(user) {
               <Navbar.Collapse>
                 <Col xs={12} className="roomSection">
                   <h2>{this.state.activeRoom.name || "Choose a room or Create one"}</h2>
+                  {roomParticipants}
                 </Col>
                 <RoomList
                    firebase={firebase}

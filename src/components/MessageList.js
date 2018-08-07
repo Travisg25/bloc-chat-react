@@ -14,8 +14,7 @@ class MessageList extends Component {
       sentAt: "",
       roomId: "",
       messages: [],
-      toEdit: '',
-      isTyping: false
+      toEdit: ''
     };
   this.messagesRef = this.props.firebase.database().ref('messages');
   this.createMessage = this.createMessage.bind(this);
@@ -34,9 +33,26 @@ componentDidMount() {
 }
 
 _keyDown(e) {
-  this.setState({isTyping: true});
+  let participant = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/participants");
+
+  participant.orderByChild("username").equalTo(this.props.user).once("value", snapshot => {
+    if (snapshot.val()) {
+      snapshot.forEach((item) => {
+        let updates = {[item.key + "/isTyping"]: true};
+        participant.update(updates);
+      });
+    }
+  });
+
   setTimeout(() => {
-    this.setState({isTyping: false});
+    participant.orderByChild("username").equalTo(this.props.user).once("value", snapshot => {
+      if (snapshot.val()) {
+        snapshot.forEach((item) => {
+          let updates = {[item.key + "/isTyping"]: false};
+          participant.update(updates);
+        });
+      }
+    });
   }, 2000);
 }
 
@@ -53,20 +69,28 @@ _addMessageContent (e) {
 
 createMessage(e) {
   e.preventDefault();
-  this.messagesRef.push(
+  let participant = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/participants");
+  let messagesRef = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/messages");
+  messagesRef.orderByChild("username").equalTo(this.state.username).once("value", snapshot => {
+    if (!snapshot.val()) {
+      participant.push({
+        username: this.state.username,
+        isTyping: false
+      });
+    }
+  });
+    this.messagesRef.push(
     {
       content: this.state.content,
       sentAt: this.state.sentAt,
       roomId: this.state.roomId,
       username: this.props.currentUser
-
     }
   );
    this.setState ({
      message: "",
      sentAt: "",
-     roomId: "",
-     isTyping: false
+     roomId: ""
   })
   e.target.reset()
  };
@@ -90,13 +114,12 @@ createMessage(e) {
  }
 
  render() {
-  let userTyping = this.state.isTyping;
   let activeRoom = this.props.activeRoom
   let currentMessages = (
     this.state.messages.map((message)=> {
       if (message.roomId === activeRoom) {
         return<ol key={message.key}>
-        <h3>{message.username + " -says: "}<span><small>{message.username === this.props.user && userTyping ? " is typing..." : ":"}</small></span></h3>
+        <h3>{message.username + " -says: "}</h3>
         {" " + message.content}
         <button onClick={() => this.setState({toEdit: message.key})}>Edit</button>
       </ol>
