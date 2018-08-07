@@ -33,27 +33,7 @@ componentDidMount() {
 }
 
 _keyDown(e) {
-  let participant = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/participants");
 
-  participant.orderByChild("username").equalTo(this.props.user).once("value", snapshot => {
-    if (snapshot.val()) {
-      snapshot.forEach((item) => {
-        let updates = {[item.key + "/isTyping"]: true};
-        participant.update(updates);
-      });
-    }
-  });
-
-  setTimeout(() => {
-    participant.orderByChild("username").equalTo(this.props.user).once("value", snapshot => {
-      if (snapshot.val()) {
-        snapshot.forEach((item) => {
-          let updates = {[item.key + "/isTyping"]: false};
-          participant.update(updates);
-        });
-      }
-    });
-  }, 2000);
 }
 
 _addMessageContent (e) {

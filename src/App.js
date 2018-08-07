@@ -8,7 +8,7 @@ import User  from './components/User.js';
 import {Grid, Row, Col, Navbar}  from 'react-bootstrap';
 
 
-var config = {
+let config = {
   apiKey: "AIzaSyCL6--NBUm0JYiTh4aXLYGSW6Wt80ParQs",
   authDomain: "bloc-chat-messenger.firebaseapp.com",
   databaseURL: "https://bloc-chat-messenger.firebaseio.com",
@@ -17,7 +17,7 @@ var config = {
   messagingSenderId: "332713763369"
 };
 firebase.initializeApp(config);
-var rootRef = firebase.database().ref();
+let rootRef = firebase.database().ref();
 
 
 class App extends Component {
@@ -33,6 +33,9 @@ class App extends Component {
 
 setActiveRoom(room) {
   this.setState({ activeRoom: room });
+  let userRef = firebase.database().ref("presence/" + this.state.user.uid);
+  let roomKey = room === "" ? "" : room.key;
+  userRef.update({currentRoom: roomKey});
 }
 
 setUser(user) {
@@ -68,9 +71,15 @@ setUser(user) {
             </Navbar>
           </Col>
           <Col sm={9} xs={12} className="messageSection">
-            <User firebase={firebase} setUser={this.setUser} currentUser={currentUser}/>
+            <User
+            firebase={firebase}
+            setUser={this.setUser}
+            currentUser={currentUser}/>
         { showMessages ?
-          <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} currentUser={currentUser} />
+          <MessageList
+          firebase={firebase}
+          activeRoom={this.state.activeRoom.key}
+          currentUser={currentUser} />
         : null
         }
         </Col>
@@ -83,13 +92,3 @@ setUser(user) {
 }
 
 export default App;
-
-// <div>
-//   <User firebase={firebase} setUser={this.setUser} currentUser={currentUser}/>
-//   <h1>{this.state.activeRoom.name || "Choose a room or Create one"}</h1>
-//   <RoomList firebase={firebase} setActiveRoom={this.setActiveRoom} />
-//   { showMessages ?
-//     <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} currentUser={currentUser} />
-//   : null
-//   }
-// </div>
