@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import '.././styles/user.css';
-import {Col, Row, FormGroup, InputGroup, FormControl, Button}  from 'react-bootstrap';
+import {Col, Row, Button}  from 'react-bootstrap';
 
 
 

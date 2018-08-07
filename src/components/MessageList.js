@@ -3,7 +3,7 @@ import * as firebase from 'firebase';
 import '.././styles/messageList.css';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Moment from 'react-moment';
-import {Col, Row, FormGroup, InputGroup, FormControl, Button}  from 'react-bootstrap';
+import {Col, Row, Button}  from 'react-bootstrap';
 
 class MessageList extends Component {
   constructor (props){
