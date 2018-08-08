@@ -5,7 +5,8 @@ import RoomList  from './components/RoomList.js';
 import MessageList from './components/MessageList.js';
 import RoomParticipants from './components/RoomParticipants.js';
 import User  from './components/User.js';
-import {Grid, Row, Col, Navbar}  from 'react-bootstrap';
+import {Grid, Row, Col, Navbar, MenuItem, FormGroup, InputGroup, FormControl, Button}  from 'react-bootstrap';
+// import 'bootstrap/dist/css/bootstrap.css';
 
 
 let config = {
@@ -56,7 +57,7 @@ class App extends Component {
         <Row className="showGrid mainRow">
           <Col xs={12} sm={3} className="sideNav">
             <Navbar fluid>
-                <h1>Bloc Chat</h1>
+                <h1>Chatter</h1>
               <Navbar.Collapse>
                 <Col xs={12} className="roomSection">
                   <h2>{this.state.activeRoom.name || "Choose a room or Create one"}</h2>

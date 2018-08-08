@@ -67,14 +67,19 @@ class MessageList extends Component {
   };
 
   editMessage(message) {
-    let editMessage= (
-     <form onSubmit={this.updateMessage}>
-       <input type="text" defaultValue={message.content} ref={(input) => this.input = input}/>
-       <input type="submit" value="Update" />
-       <button type="button" onClick={() => this.setState({toEdit: ""})}>Cancel</button>
-     </form>
-    );
-    return editMessage;
+    let editMessage = (
+      <form onSubmit={this.updateMessage}>
+        <FormGroup>
+          <InputGroup>
+            <FormControl type="text" defaultValue={message.content} inputRef={(input) => this.input = input}/>
+            <InputGroup.Button>
+              <Button type="submit">Update</Button>
+              <Button onClick={() => this.setState({toEdit: ""})}>Cancel</Button>
+            </InputGroup.Button>
+          </InputGroup>
+        </FormGroup>
+      </form>
+    )
   }
 
   updateMessage(e) {
@@ -115,6 +120,22 @@ class MessageList extends Component {
      </form>
    </div>
   )
+
+  // let messageWindow = (
+  //   <FormGroup>
+  //     <InputGroup>
+  //       <FormControl
+  //         type = "text"
+  //         value =  {this.state.content}
+  //         placeholder = "Enter a Message"
+  //         onChange =  {this._addMessageContent}
+  //         />
+  //         <InputGroup.Button>
+  //           <Button type="submit">Send</Button>
+  //         </InputGroup.Button>
+  //     </InputGroup>
+  //   </FormGroup>
+  // )
 
    return (
      <Row className="showGrid messageListBar">
