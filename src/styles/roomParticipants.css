@@ -1,0 +1,7 @@
+.participantsSection p {
+  border-bottom: .1rem solid black;
+  display: inline;
+}
+ .participantsSection button {
+  float: right;
+}

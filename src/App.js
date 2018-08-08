@@ -31,16 +31,16 @@ class App extends Component {
     this.setUser = this.setUser.bind(this);
   }
 
-setActiveRoom(room) {
-  this.setState({ activeRoom: room });
-  let userRef = firebase.database().ref("presence/" + this.state.user.uid);
-  let roomKey = room === "" ? "" : room.key;
-  userRef.update({currentRoom: roomKey});
-}
+  setActiveRoom(room) {
+    this.setState({ activeRoom: room });
+    let userRef = firebase.database().ref("presence/" + this.state.user.uid);
+    let roomKey = room === "" ? "" : room.key;
+    userRef.update({currentRoom: roomKey});
+  }
 
-setUser(user) {
-  this.setState({ user: user });
-}
+  setUser(user) {
+    this.setState({ user: user });
+  }
 
   render() {
     let roomParticipants = <RoomParticipants

@@ -2,9 +2,17 @@
   position: fixed;
   height: 3rem;
   z-index: 1;
+  text-align: right;
 }
-  @media (max-width: 767px) {
-   .loginSection {
-     padding-top: 3rem;
-   }
+
+.loginSection h6:hover {
+  color: blue;
+  cursor: pointer;
+
+}
+
+  @media (max-width: 768px) {
+    .loginSection {
+      clear: both;
+    }
 }

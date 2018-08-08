@@ -59,7 +59,9 @@ class RoomList extends Component {
 
   deleteRoom(roomKey) {
     let room = this.props.firebase.database().ref("rooms/" + roomKey);
+    let roomMessages = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/messages");
     room.remove();
+    roomMessages.remove();
   }
 
   editRoom(room) {
@@ -75,7 +77,6 @@ class RoomList extends Component {
                 </Button>
                 <Button type="button" alt="cancel" onClick={() => this.setState({toEdit: ""})}>
                 edit
-
                 </Button>
               </InputGroup.Button>
             </InputGroup>

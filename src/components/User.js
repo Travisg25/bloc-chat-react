@@ -3,40 +3,41 @@ import * as firebase from 'firebase';
 import '.././styles/user.css';
 import {Col, Row, Button}  from 'react-bootstrap';
 
-
-
 class User extends Component {
   constructor (props){
     super(props);
     this.signIn = this.signIn.bind(this);
     this.signOut = this.signOut.bind(this);
   }
- componentDidMount() {
+
+  componentDidMount() {
     this.props.firebase.auth().onAuthStateChanged((user) => {
       this.props.setUser(user);
     });
   }
- signIn() {
+
+  signIn() {
   const provider = new this.props.firebase.auth.GoogleAuthProvider();
   this.props.firebase.auth().signInWithPopup(provider).then((result) => {
     const user = result.user;
     this.props.setUser(user);
   });
-}
- signOut() {
+  }
+
+  signOut() {
   this.props.firebase.auth().signOut().then(() => {
     this.props.setUser(null);
   });
-}
+  }
   render() {
      return (
-       <Row className="showGrid">
+       <Row className="loginSection">
         <Col xs={12} className="loginSection">
-          <h3>Welcome, {this.props.currentUser}</h3>
+          <h5>Welcome, {this.props.currentUser}</h5>
           { this.props.currentUser === "Guest" ?
-            <button onClick={this.signIn}>Sign In</button>
+            <h6 onClick={this.signIn}>Sign In</h6>
             :
-            <button onClick={this.signOut}>Sign Out</button>
+            <h6 onClick={this.signOut}>Sign Out</h6>
           }
         </Col>
       </Row>
