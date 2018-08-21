@@ -1,40 +1,47 @@
-import React, { Component } from 'react';
-import * as firebase from 'firebase';
-import { Col, Navbar, MenuItem, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
-import '.././styles/roomList.css';
-
+import React, { Component } from "react";
+import * as firebase from "firebase";
+import {
+  Col,
+  Navbar,
+  MenuItem,
+  FormGroup,
+  InputGroup,
+  FormControl,
+  Button
+} from "react-bootstrap";
+import ".././styles/roomList.css";
 
 class RoomList extends Component {
-  constructor (props){
-  super(props);
-  this.state = {
-    rooms: [],
-    creator: "",
-    name:'',
-    toEdit: ''
-  };
-  this.roomsRef = this.props.firebase.database().ref('rooms');
-  this.createRoom = this.createRoom.bind(this);
-  this._roomChange = this._roomChange.bind(this);
-  this.editRoom = this.editRoom.bind(this);
-  this.updateRoom = this.updateRoom.bind(this);
-}
+  constructor(props) {
+    super(props);
+    this.state = {
+      rooms: [],
+      creator: "",
+      name: "",
+      toEdit: ""
+    };
+    this.roomsRef = this.props.firebase.database().ref("rooms");
+    this.createRoom = this.createRoom.bind(this);
+    this._roomChange = this._roomChange.bind(this);
+    this.editRoom = this.editRoom.bind(this);
+    this.updateRoom = this.updateRoom.bind(this);
+  }
 
   componentDidMount() {
-    this.roomsRef.on('value', snapshot => {
+    this.roomsRef.on("value", snapshot => {
       let roomChanges = [];
-      snapshot.forEach((room) => {
+      snapshot.forEach(room => {
         roomChanges.push({
           key: room.key,
           creator: room.val().creator,
-          name: room.val().name,
+          name: room.val().name
         });
       });
-      this.setState({ rooms: roomChanges})
+      this.setState({ rooms: roomChanges });
     });
   }
 
-  _roomChange (e) {
+  _roomChange(e) {
     e.preventDefault();
     this.setState({
       name: e.target.value,
@@ -42,15 +49,13 @@ class RoomList extends Component {
     });
   }
 
-  createRoom (e) {
-    e.preventDefault()
-    this.roomsRef.push(
-      {
-        name: this.state.name,
-        creator: this.state.creator
-      }
-    );
-    this.setState({ name: "", creator: "" })
+  createRoom(e) {
+    e.preventDefault();
+    this.roomsRef.push({
+      name: this.state.name,
+      creator: this.state.creator
+    });
+    this.setState({ name: "", creator: "" });
   }
 
   selectRoom(room) {
@@ -59,7 +64,9 @@ class RoomList extends Component {
 
   deleteRoom(roomKey) {
     let room = this.props.firebase.database().ref("rooms/" + roomKey);
-    let roomMessages = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/messages");
+    let roomMessages = this.props.firebase
+      .database()
+      .ref("rooms/" + this.props.activeRoom + "/messages");
     room.remove();
     roomMessages.remove();
   }
@@ -70,13 +77,21 @@ class RoomList extends Component {
         <form onSubmit={this.updateRoom}>
           <FormGroup>
             <InputGroup>
-              <FormControl type="text" defaultValue={room.name} inputRef={(input) => this.input = input} />
+              <FormControl
+                type="text"
+                defaultValue={room.name}
+                inputRef={input => (this.input = input)}
+              />
               <InputGroup.Button>
                 <Button type="submit" alt="update">
-                submit
+                  submit
                 </Button>
-                <Button type="button" alt="cancel" onClick={() => this.setState({toEdit: ""})}>
-                edit
+                <Button
+                  type="button"
+                  alt="cancel"
+                  onClick={() => this.setState({ toEdit: "" })}
+                >
+                  edit
                 </Button>
               </InputGroup.Button>
             </InputGroup>
@@ -86,40 +101,51 @@ class RoomList extends Component {
     );
     return editRoom;
   }
-   updateRoom(e) {
+  updateRoom(e) {
     e.preventDefault();
-    const updates = {[this.state.toEdit + "/name"]: this.input.value};
+    const updates = { [this.state.toEdit + "/name"]: this.input.value };
     this.roomsRef.update(updates);
-    this.setState({ toEdit: ""});
+    this.setState({ toEdit: "" });
   }
 
   render() {
-    let roomlist = this.state.rooms.map((room, index) =>
-    <li key={room.key}>
-      {this.state.toEdit === room.key ?
-        this.editRoom(room)
-      :
-        <div>
-          <h3 onClick={(e) => this.selectRoom(room, e)}>{room.name}</h3>
-            <MenuItem onClick={() => this.setState({toEdit: room.key})}>Edit</MenuItem>
-            <MenuItem onClick={() => this.deleteRoom(room.key)}>Delete</MenuItem>
-        </div>
-      }
+    let roomlist = this.state.rooms.map((room, index) => (
+      <li key={room.key}>
+        {this.state.toEdit === room.key ? (
+          this.editRoom(room)
+        ) : (
+          <div>
+            <h3 onClick={e => this.selectRoom(room, e)}>{room.name}</h3>
+            <MenuItem onClick={() => this.setState({ toEdit: room.key })}>
+              Edit
+            </MenuItem>
+            <MenuItem onClick={() => this.deleteRoom(room.key)}>
+              Delete
+            </MenuItem>
+          </div>
+        )}
       </li>
-    );
+    ));
 
     let roomForm = (
       <form onSubmit={this.createRoom}>
         <FormGroup>
           <InputGroup>
-            <FormControl type="text" name="title" value={this.state.name} placeholder="New Room" onChange={this._roomChange}/>
+            <h3>Make a new room here </h3>
+            <FormControl
+              type="text"
+              name="title"
+              value={this.state.name}
+              placeholder="New Room"
+              onChange={this._roomChange}
+            />
             <InputGroup.Button>
-              <Button type="submit">Create</Button>
+              <button type="submit">Create</button>
             </InputGroup.Button>
           </InputGroup>
         </FormGroup>
       </form>
-      )
+    );
 
     return (
       <Col xs={12} className="roomList">
@@ -129,6 +155,5 @@ class RoomList extends Component {
     );
   }
 }
-
 
 export default RoomList;

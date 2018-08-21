@@ -1,5 +1,54 @@
-ul, li {
+* {
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  box-sizing: border-box;
+
+  /* Colors */
+  --primary-color: rgb(33, 32, 32);
+  --secondary-color: rgb(0, 255, 3);
+  --third-color: rgb(152, 0, 235);
+  /* Light Colors */
+  --primary-color-light: rgba(32, 32, 32, 0.55);
+  --secondary-color-light: rgba(0, 255, 3, 0.55);
+  --third-color-light: rgba(152, 0, 235, 0.55);
+  /* Font Sizes0 */
+  --lg-heading: 2.4em;
+  --med-heading: 1.9em;
+  --sm-med-heading: 1.5em;
+  --sm-heading: 1.2em;
+}
+
+body {
+  font-size: 16px;
+  margin: 0.8rem;
+  background-color: ;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+ul,
+li,
+a {
   list-style-type: none;
+  text-decoration: none;
+}
+
+a {
+  color: var(--secondary-color);
+}
+
+h1 {
+  font-size: var(--lg-heading);
+}
+
+h2 {
+  font-size: var(--med-heading);
+}
+
+h3 {
+  font-size: var(--sm-med-heading);
+}
+h4 {
+  font-size: var(--sm-heading);
 }
 
 textarea {
@@ -8,12 +57,11 @@ textarea {
 }
 
 .App {
-  color: #050913;
+  color: var(--primary-color);
   text-align: center;
 }
 
 .messageSection {
-  background-color: orange;
 }
 
 .navbarDefault {
@@ -21,44 +69,58 @@ textarea {
   border: none;
 }
 
- @media (min-width: 768px) {
-   .mainRow {
-     min-height: 100%;
-     display: flex;
-   }
+@media (min-width: 768px) {
+  .mainRow {
+    min-height: 100%;
+    display: flex;
+  }
 
-   .sideNav {
-     background-color: purple;
-     display: flex;
-     flex-direction: column;
-   }
+  .sideNav {
+    display: flex;
+    flex-direction: column;
+  }
 
-   .messageSection {
-     display: flex;
-     flex-direction: column;
-   }
+  .messageSection {
+    display: flex;
+    flex-direction: column;
+  }
 
-   .navbarDefault {
-     position: fixed;
-     left: 0;
-   }
- }
+  .navbarDefault {
+    position: fixed;
+    left: 0;
+  }
+}
 
- @media (max-width: 767px) {
-   .main {
-    background-color: pink;
-   }
+@media (max-width: 767px) {
+  .main {
+    background-color: var(--third-color-light);
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "navTop"
+      "nav"
+      "messages";
+  }
+  .loginSection {
+    grid-template: "navTop";
+  }
+  .sideNav,
+  .navbar {
+    grid-template: "nav";
+    z-index: 2;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: 0;
+  }
 
-   .sideNav .navbar {
-     position: fixed;
-     z-index: 2;
-     top: 0;
-     right: 0;
-     left: 0;
-     margin: 0;
-   }
+  .navbarDefault .navbarHeader,
+  .navbarDefault .navbarCollapse {
+    background-color: purple;
+  }
 
-   .navbarDefault .navbarHeader, .navbarDefault .navbarCollapse {
-     background-color: purple;
-   }
- }
+  .messageSection {
+    display: grid;
+    grid-template: "messages";
+  }
+}

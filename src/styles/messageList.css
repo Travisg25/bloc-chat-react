@@ -1,11 +1,14 @@
 #messageWindow {
-  background-color: lightblue;
+  background-color: var(--third-color);
   position: fixed;
   bottom: 0;
   height: 5rem;
   z-index: 1;
 }
- .messageList {
+.messageList {
   padding-top: 6rem;
   padding-bottom: 5rem;
+}
+
+@media (max-width: 767px) {
 }

@@ -2,17 +2,18 @@
   position: fixed;
   height: 3rem;
   z-index: 1;
-  text-align: right;
+  text-align: center;
 }
 
 .loginSection h6:hover {
-  color: blue;
+  color: var(--secondary-color);
   cursor: pointer;
-
 }
 
-  @media (max-width: 768px) {
-    .loginSection {
-      clear: both;
-    }
+@media (max-width: 767px) {
+  .loginSection {
+    clear: both;
+    position: relative;
+    text-align: left;
+  }
 }
