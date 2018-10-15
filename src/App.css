@@ -1,64 +1,112 @@
-ul, li {
-  list-style-type: none;
-}
+@import url("https://fonts.googleapis.com/css?family=Fira+Sans:400");
 
-textarea {
-  height: 100px;
-  width: 85%;
-}
-
-.App {
-  color: #050913;
+.app-header {
+  font-family: "Fira Sans", sans-serif;
+  color: #f5f5f5;
   text-align: center;
 }
 
-.messageSection {
-  background-color: orange;
+.message-section {
+  width: 1200px;
+  height: 900px;
+  background-color: #252525;
 }
 
-.navbarDefault {
+.navbar-default {
   background: none;
   border: none;
 }
 
- @media (min-width: 768px) {
-   .mainRow {
-     min-height: 100%;
-     display: flex;
-   }
+.navbar {
+  margin-bottom: 0;
+}
 
-   .sideNav {
-     background-color: purple;
-     display: flex;
-     flex-direction: column;
-   }
+.sidenav {
+  background-color: #248232;
+}
 
-   .messageSection {
-     display: flex;
-     flex-direction: column;
-   }
+.navbar-default .navbar-brand {
+  color: rgb(255, 145, 29);
+  color: rgba(255, 145, 29, 0.7);
+}
 
-   .navbarDefault {
-     position: fixed;
-     left: 0;
-   }
- }
+@media (min-width: 768px) {
+  .main {
+    background: #248232;
+  }
 
- @media (max-width: 767px) {
-   .main {
-    background-color: pink;
-   }
+  .main-row {
+    width: 100vw;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+  }
 
-   .sideNav .navbar {
-     position: fixed;
-     z-index: 2;
-     top: 0;
-     right: 0;
-     left: 0;
-     margin: 0;
-   }
+  .sidenav {
+    border-right: 4px rgb(14, 246, 86) solid;
+    background-color: #2d3a3a;
+    display: flex;
+    flex-direction: column;
+  }
 
-   .navbarDefault .navbarHeader, .navbarDefault .navbarCollapse {
-     background-color: purple;
-   }
- }
+  .message-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .navbar-default {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: inherit;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .navbar-form {
+    padding: 0;
+  }
+
+  .navbar::-webkit-scrollbar,
+  .navbar::-webkit-scrollbar-track {
+    background-color: #f9fbfc;
+    width: 0.75rem;
+  }
+
+  .navbar::-webkit-scrollbar-thumb {
+    background-color: #a39ea1;
+    width: 0.75rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-header {
+    font-family: "Raleway", sans-serif;
+    color: #fcfffc;
+    text-align: left;
+  }
+  .main {
+    background-color: #252525;
+  }
+
+  .navbar-default {
+    background-color: #f9fbfc;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 2;
+  }
+
+  .sidenav {
+    border-bottom: 4px rgb(14, 246, 86) solid;
+    background-color: #2d3a3a;
+    overflow-x: hidden;
+  }
+
+  .navbar-default .navbar-collapse {
+    max-height: 80vh;
+  }
+}

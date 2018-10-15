@@ -1,1 +1,106 @@
+@import url("https://fonts.googleapis.com/css?family=Fira+Sans:200");
 
+.active-room {
+  font-family: "Fira Sans", sans-serif;
+  color: #f5f5f5;
+  font-size: 1.75rem;
+}
+
+#create-room {
+  text-align: center;
+  border-bottom: 0.1rem solid #717171;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+
+#create-room:hover {
+  cursor: pointer;
+}
+
+.room-list,
+.room-list ul,
+.room-section {
+  padding: 0;
+}
+
+.room-form {
+}
+
+.room-list-item {
+  list-style: none;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.room-list-container {
+  float: left;
+}
+.room-title {
+  color: white;
+  font-family: "Raleway", sans-serif;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  display: inline;
+  vertical-align: middle;
+}
+
+.room-options {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: 0.5rem;
+  border: none;
+  background: none;
+}
+
+.no-options {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: 0.5rem;
+}
+
+.room-block,
+.room-edit {
+  margin-bottom: 0.5rem;
+}
+
+.fa-check {
+  color: #21ce63;
+}
+
+.fa-times {
+  color: #e04028;
+}
+
+.room-transition-enter {
+  color: #a79292;
+}
+
+.room-transition-enter.room-transition-enter-active {
+  color: #16020d;
+  transition: color 500ms ease-in;
+}
+
+.room-transition-exit {
+  opacity: 1;
+}
+
+.room-transition-exit.room-transition-exit.active {
+  opacity: 0;
+  transition: opacity 300ms ease-in;
+}
+
+@media (max-width: 991px) {
+  .room-title {
+    font-size: 0.9rem;
+  }
+
+  .room-options,
+  .no-options {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.25rem;
+  }
+}

@@ -1,82 +1,105 @@
-import React, { Component } from 'react';
-import * as firebase from 'firebase';
-import { Col, Navbar, MenuItem, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
-import '.././styles/roomList.css';
-
+import React, { Component } from "react";
+import {
+  Col,
+  Navbar,
+  DropdownButton,
+  MenuItem,
+  FormGroup,
+  InputGroup,
+  FormControl,
+  Button,
+  ButtonGroup
+} from "react-bootstrap";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import ".././styles/roomList.css";
 
 class RoomList extends Component {
-  constructor (props){
-  super(props);
-  this.state = {
-    rooms: [],
-    creator: "",
-    name:'',
-    toEdit: ''
-  };
-  this.roomsRef = this.props.firebase.database().ref('rooms');
-  this.createRoom = this.createRoom.bind(this);
-  this._roomChange = this._roomChange.bind(this);
-  this.editRoom = this.editRoom.bind(this);
-  this.updateRoom = this.updateRoom.bind(this);
-}
-
-  componentDidMount() {
-    this.roomsRef.on('value', snapshot => {
-      let roomChanges = [];
-      snapshot.forEach((room) => {
-        roomChanges.push({
-          key: room.key,
-          creator: room.val().creator,
-          name: room.val().name,
-        });
-      });
-      this.setState({ rooms: roomChanges})
-    });
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: "",
+      creator: "",
+      rooms: [],
+      toEdit: "",
+      isOpen: false
+    };
+    this.roomsRef = this.props.firebase.database().ref("rooms");
+    this.handleChange = this.handleChange.bind(this);
+    this.createRoom = this.createRoom.bind(this);
+    this.deleteRoom = this.deleteRoom.bind(this);
+    this.editRoom = this.editRoom.bind(this);
+    this.updateRoom = this.updateRoom.bind(this);
+    this.validateRoomName = this.validateRoomName.bind(this);
+    this.updatedeleteMessage = this.updateRoom.bind(this);
+    this.toggleCreateRoom = this.toggleCreateRoom.bind(this);
   }
 
-  _roomChange (e) {
+  validateRoomName(str) {
+    const roomTitle = str || this.state.title;
+    const roomLength = roomTitle.trim().length;
+    if (roomLength > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  toggleCreateRoom() {
+    this.setState(prevState => ({
+      isOpen: !prevState.isOpen
+    }));
+  }
+
+  handleChange(e) {
     e.preventDefault();
     this.setState({
-      name: e.target.value,
-      creator: e.target.value
+      [e.target.name]: e.target.value,
+      creator: this.props.user
     });
   }
 
-  createRoom (e) {
-    e.preventDefault()
-    this.roomsRef.push(
-      {
-        name: this.state.name,
+  createRoom(e) {
+    e.preventDefault();
+    if (this.validateRoomName()) {
+      this.roomsRef.push({
+        title: this.state.title,
         creator: this.state.creator
-      }
-    );
-    this.setState({ name: "", creator: "" })
-  }
-
-  selectRoom(room) {
-    this.props.setActiveRoom(room);
+      });
+      this.setState({ title: "", creator: "", isOpen: false });
+    }
   }
 
   deleteRoom(roomKey) {
-    let room = this.props.firebase.database().ref("rooms/" + roomKey);
-    let roomMessages = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/messages");
+    const room = this.props.firebase.database().ref("rooms/" + roomKey);
+    const roomMessages = this.props.firebase
+      .database()
+      .ref("messages/" + roomKey);
     room.remove();
     roomMessages.remove();
+    this.props.activeRoom("");
   }
 
   editRoom(room) {
-    let editRoom = (
-      <div className="roomEdit">
+    const editRoom = (
+      <div className="room-edit">
         <form onSubmit={this.updateRoom}>
           <FormGroup>
             <InputGroup>
-              <FormControl type="text" defaultValue={room.name} inputRef={(input) => this.input = input} />
+              <FormControl
+                type="text"
+                defaultValue={room.title}
+                inputRef={input => (this.input = input)}
+              />
               <InputGroup.Button>
                 <Button type="submit" alt="update">
-                submit
+                  <i className="fa fa-check" />
                 </Button>
-                <Button type="button" alt="cancel" onClick={() => this.setState({toEdit: ""})}>
-                edit
+                <Button
+                  type="button"
+                  alt="cancel"
+                  onClick={() => this.setState({ toEdit: "" })}
+                >
+                  <i className="fa fa-times" />
                 </Button>
               </InputGroup.Button>
             </InputGroup>
@@ -86,49 +109,105 @@ class RoomList extends Component {
     );
     return editRoom;
   }
-   updateRoom(e) {
+
+  updateRoom(e) {
     e.preventDefault();
-    const updates = {[this.state.toEdit + "/name"]: this.input.value};
+    const updates = { [this.state.toEdit + "/title"]: this.input.value };
     this.roomsRef.update(updates);
-    this.setState({ toEdit: ""});
+    this.setState({ toEdit: "" });
+  }
+
+  componentDidMount() {
+    this.roomsRef.on("value", snapshot => {
+      const roomChanges = [];
+      snapshot.forEach(room => {
+        roomChanges.push({
+          key: room.key,
+          title: room.val().title,
+          creator: room.val().creator
+        });
+      });
+      this.setState({ rooms: roomChanges });
+    });
+  }
+
+  selectRoom(room) {
+    this.props.activeRoom(room);
   }
 
   render() {
-    let roomlist = this.state.rooms.map((room, index) =>
-    <li key={room.key}>
-      {this.state.toEdit === room.key ?
-        this.editRoom(room)
-      :
-        <div>
-          <h3 onClick={(e) => this.selectRoom(room, e)}>{room.name}</h3>
-            <MenuItem onClick={() => this.setState({toEdit: room.key})}>Edit</MenuItem>
-            <MenuItem onClick={() => this.deleteRoom(room.key)}>Delete</MenuItem>
-        </div>
-      }
-      </li>
-    );
-
-    let roomForm = (
+    const roomForm = (
       <form onSubmit={this.createRoom}>
         <FormGroup>
           <InputGroup>
-            <FormControl type="text" name="title" value={this.state.name} placeholder="New Room" onChange={this._roomChange}/>
+            <FormControl
+              type="text"
+              name="title"
+              value={this.state.title}
+              placeholder="New Room"
+              onChange={this.handleChange}
+            />
             <InputGroup.Button>
               <Button type="submit">Create</Button>
             </InputGroup.Button>
           </InputGroup>
         </FormGroup>
       </form>
-      )
+    );
+
+    const roomList = this.state.rooms.map(room => (
+      <CSSTransition
+        key={room.key}
+        classNames="room-transition"
+        timeout={{ enter: 500, exit: 300 }}
+      >
+        <li className="room-list-item">
+          {this.state.toEdit === room.key ? (
+            this.editRoom(room)
+          ) : (
+            <div className="room-block">
+              {this.props.user === room.creator ? (
+                <div className="room-list-container">
+                  <span
+                    className="room-list-item fa fa-wrench text-warning"
+                    onClick={() => this.setState({ toEdit: room.key })}
+                  />
+                  <span
+                    className="room-list-item fa fa-trash text-danger"
+                    onClick={() => this.deleteRoom(room.key)}
+                  />
+                </div>
+              ) : (
+                <div className="no-options" />
+              )}
+              <h3
+                className="room-title cursor-color-change"
+                onClick={e => this.selectRoom(room, e)}
+              >
+                {room.title}
+              </h3>
+            </div>
+          )}
+        </li>
+      </CSSTransition>
+    ));
 
     return (
-      <Col xs={12} className="roomList">
-        <ul>{roomForm}</ul>
-        <ul>{roomlist}</ul>
+      <Col xs={12} className="room-list">
+        <div>
+          <h3 id="create-room" onClick={this.toggleCreateRoom}>
+            create a room
+          </h3>
+        </div>
+        {this.state.isOpen ? (
+          <div className="room-form">
+            <div>{roomForm}</div>
+          </div>
+        ) : null}
+        <TransitionGroup component="ul">{roomList}</TransitionGroup>
       </Col>
     );
   }
 }
-
 
 export default RoomList;
