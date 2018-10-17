@@ -148,7 +148,7 @@ class RoomList extends Component {
               onChange={this.handleChange}
             />
             <InputGroup.Button>
-              <Button type="submit">Create</Button>
+              <button type="submit">Create</button>
             </InputGroup.Button>
           </InputGroup>
         </FormGroup>
