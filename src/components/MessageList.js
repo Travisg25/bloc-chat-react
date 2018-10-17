@@ -1,158 +1,258 @@
-import React, { Component } from 'react';
-import * as firebase from 'firebase';
-import '.././styles/messageList.css';
-import {Col, Row, Button, FormGroup, InputGroup, FormControl}  from 'react-bootstrap';
+import React, { Component } from "react";
+import {
+  Col,
+  FormGroup,
+  InputGroup,
+  FormControl,
+  Button
+} from "react-bootstrap";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import Moment from "react-moment";
+import ".././styles/messageList.css";
 
 class MessageList extends Component {
-  constructor (props){
-  super(props);
+  constructor(props) {
+    super(props);
     this.state = {
       username: "",
       content: "",
       sentAt: "",
-      roomId: "",
       messages: [],
-      toEdit: ''
+      toEdit: ""
     };
-  this.messagesRef = this.props.firebase.database().ref('messages');
-  this.createMessage = this.createMessage.bind(this);
-  this._addMessageContent = this._addMessageContent.bind(this);
-  this.editMessage =  this.editMessage.bind(this);
-  this.updateMessage = this.updateMessage.bind(this);
-  this._keyDown = this._keyDown.bind(this);
-};
+    this.messagesRef = this.props.firebase
+      .database()
+      .ref("messages" + this.props.activeRoom);
+    this.handleChange = this.handleChange.bind(this);
+    this.createMessage = this.createMessage.bind(this);
+    this.editMessage = this.editMessage.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
+    this.updateMessage = this.updateMessage.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+  }
 
-  componentDidMount() {
-    this.messagesRef.on('child_added', snapshot => {
-      const message = snapshot.val();
-      message.key = snapshot.key;
-      this.setState({ messages: this.state.messages.concat( message ) })
+  validateMessage(str) {
+    const msgContent = str || this.state.content;
+    const msgLength = msgContent.trim().length;
+    if (msgLength > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  handleKeyDown(e) {
+    const userRef = this.props.firebase
+      .database()
+      .ref("presence/" + this.props.user.uid);
+    userRef.update({ isTyping: true });
+    setTimeout(() => {
+      userRef.update({ isTyping: false });
+    }, 2000);
+  }
+
+  handleChange(e) {
+    e.preventDefault();
+    this.setState({
+      username: this.props.user.displayName,
+      content: e.target.value,
+      sentAt: this.props.firebase.database.ServerValue.TIMESTAMP
     });
   }
 
-  _keyDown(e) {
-
-  }
-
-  _addMessageContent (e) {
-    e.preventDefault();
-    this.setState(
-      {
-      content: e.target.value,
-      sentAt: firebase.database.ServerValue.TIMESTAMP,
-      roomId: this.props.activeRoom,
-      username: this.props.currentUser
-    })
-  }
-
   createMessage(e) {
+    const messagesRef = this.props.firebase
+      .database()
+      .ref("messages/" + this.props.activeRoom);
     e.preventDefault();
-    let participant = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/participants");
-    let messagesRef = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/messages");
-
-    this.messagesRef.push(
-      {
+    if (this.validateMessage()) {
+      messagesRef.push({
+        username: this.state.username,
         content: this.state.content,
-        sentAt: this.state.sentAt,
-        roomId: this.state.roomId,
-        username: this.props.currentUser
-      }
-    );
-     this.setState ({
-       message: "",
-       sentAt: "",
-       roomId: ""
-    })
-    e.target.reset()
-  };
+        sentAt: this.state.sentAt
+      });
+      this.setState({ username: "", content: "", sentAt: "" });
+    }
+  }
+
+  deleteMessage(messageKey) {
+    let message = this.props.firebase.database().ref("messages/" + messageKey);
+    let roomMessages = this.props.firebase
+      .database()
+      .ref("rooms/" + this.props.activeRoom + "/messages");
+    message.remove();
+    roomMessages.remove();
+  }
 
   editMessage(message) {
-    let editMessage = (
+    const editMessage = (
       <form onSubmit={this.updateMessage}>
         <FormGroup>
           <InputGroup>
-            <FormControl type="text" defaultValue={message.content} inputRef={(input) => this.input = input}/>
+            <FormControl
+              type="text"
+              defaultValue={message.content}
+              inputRef={input => (this.input = input)}
+            />
             <InputGroup.Button>
-              <Button type="submit">Update</Button>
-              <Button onClick={() => this.setState({toEdit: ""})}>Cancel</Button>
+              <Button type="submit" alt="update">
+                <i className="fa fa-check" />
+              </Button>
+              <Button
+                type="button"
+                alt="cancel"
+                onClick={() => this.setState({ toEdit: "" })}
+              >
+                <i className="fa fa-times" />
+              </Button>
             </InputGroup.Button>
           </InputGroup>
         </FormGroup>
       </form>
-    )
+    );
+    return editMessage;
   }
 
   updateMessage(e) {
-   e.preventDefault();
-   let messagesRef = this.props.firebase.database().ref("rooms/" + this.props.activeRoom + "/messages");
-   let updates = {[this.state.toEdit + "/content"]: this.input.value};
-   messagesRef.update(updates);
-   this.setState({ toEdit: ""});
- }
+    e.preventDefault();
+    if (this.validateMessage(this.input.value)) {
+      const updatedTime = this.props.firebase.database.ServerValue.TIMESTAMP;
+      const messagesRef = this.props.firebase
+        .database()
+        .ref("messages/" + this.props.activeRoom + "/" + this.state.toEdit);
+      const updates = {};
+      updates["/content"] = this.input.value;
+      updates["/updatedTime"] = updatedTime;
+      messagesRef.update(updates);
+      this.setState({ toEdit: "" });
+    }
+  }
 
- render() {
-  let activeRoom = this.props.activeRoom
+  componentDidMount() {
+    const messagesRef = this.props.firebase
+      .database()
+      .ref("messages/" + this.props.activeRoom);
+    messagesRef.on("value", snapshot => {
+      const messageChanges = [];
+      snapshot.forEach(message => {
+        messageChanges.push({
+          key: message.key,
+          username: message.val().username,
+          content: message.val().content,
+          sentAt: message.val().sentAt,
+          updatedTime: message.val().updatedTime
+        });
+      });
+      this.setState({ messages: messageChanges });
+      this.latestMessage.scrollIntoView();
+    });
+  }
 
-  let currentMessages = (
-    this.state.messages.map((message) => {
-      if (message.roomId === activeRoom) {
-        return<li key={message.key}>
-            <h3>{message.username}:</h3>
-            {(this.state.toEdit === message.key) && (this.props.user === message.username) ?
-              this.editMessage(message)
-              :
-              <div>
-                <h5>{" says: " + message.content}</h5>
-                <button onClick={() => this.setState({toEdit: message.key})}>Edit</button>
-              </div>
-            }
-          </li>
-      }
-      return null;
-    })
-  )
+  componentDidUpdate() {
+    if (!this.state.toEdit) {
+      this.latestMessage.scrollIntoView();
+    }
+  }
 
- let messageWindow= (
-   <div id="messageWindow">
-     <form onSubmit={this.createMessage}>
-       <input type='text' placeholder="Type message here" onChange={this._addMessageContent}/>
-       <input type="submit" value="Send"/>
-     </form>
-   </div>
-  )
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.activeRoom !== this.props.activeRoom) {
+      const messagesRef = this.props.firebase
+        .database()
+        .ref("messages/" + nextProps.activeRoom);
+      messagesRef.on("value", snapshot => {
+        let messageChanges = [];
+        snapshot.forEach(message => {
+          messageChanges.push({
+            key: message.key,
+            username: message.val().username,
+            content: message.val().content,
+            sentAt: message.val().sentAt,
+            updatedTime: message.val().updatedTime
+          });
+        });
+        this.setState({ messages: messageChanges });
+        this.latestMessage.scrollIntoView();
+      });
+    }
+  }
 
-  // let messageWindow = (
-  //   <FormGroup>
-  //     <InputGroup>
-  //       <FormControl
-  //         type = "text"
-  //         value =  {this.state.content}
-  //         placeholder = "Enter a Message"
-  //         onChange =  {this._addMessageContent}
-  //         />
-  //         <InputGroup.Button>
-  //           <Button type="submit">Send</Button>
-  //         </InputGroup.Button>
-  //     </InputGroup>
-  //   </FormGroup>
-  // )
+  render() {
+    const messageBar = (
+      <form onSubmit={this.createMessage}>
+        <FormGroup>
+          <InputGroup>
+            <FormControl
+              type="text"
+              value={this.state.content}
+              placeholder="Enter Message"
+              onChange={this.handleChange}
+              onKeyDown={this.handleKeyDown}
+            />
+            <InputGroup.Button>
+              <Button type="submit">Send</Button>
+            </InputGroup.Button>
+          </InputGroup>
+        </FormGroup>
+      </form>
+    );
 
-   return (
-     <Row className="showGrid messageListBar">
-       <Col xs={12} className="messageListBar">
-          <Row className="showGrid">
-           <Col xs={12} className="messageList">
-             <ul>{currentMessages}</ul>
-           </Col>
-         </Row>
-          <Row className="showGrid">
-           <Col xs={12} id="messageWindow">{messageWindow}</Col>
-         </Row>
+    const messageList = this.state.messages.map(message => (
+      <CSSTransition
+        key={message.key}
+        classNames="message-transition"
+        timeout={200}
+      >
+        <li className="message-item">
+          <Moment
+            element="span"
+            format="MM/DD/YY hh:mm A"
+            className="msg-sent-at"
+          >
+            {message.sentAt}
+          </Moment>
+          {message.updatedTime ? (
+            <span className="msg-updated-at">
+              Edited on:{" "}
+              <Moment element="span" format="MM/DD/YY hh:mm A">
+                {message.updatedTime}
+              </Moment>
+            </span>
+          ) : null}
+          <h4 className="msg-username">{message.username}</h4>
+          {this.state.toEdit === message.key &&
+          this.props.user.displayName === message.username ? (
+            this.editMessage(message)
+          ) : (
+            <div>
+              {this.props.user.displayName === message.username ? (
+                <div className="messsage-list-container">
+                  <span
+                    className="fa fa-wrench edit-msg float-right ml-2 text-warning"
+                    onClick={() => this.setState({ toEdit: message.key })}
+                  />
+                </div>
+              ) : (
+                <div className="no-edit-msg" />
+              )}
+              <p className="msg-content">{message.content}</p>
+            </div>
+          )}
+        </li>
+      </CSSTransition>
+    ));
+
+    return (
+      <Col sm={8} xs={12} className="message-section">
+        <Col xs={12} className="message-list">
+          <TransitionGroup component="ul">{messageList}</TransitionGroup>
+          <div ref={latest => (this.latestMessage = latest)} />
         </Col>
-     </Row>
-   );
- }
+        <Col xs={12} className="message-bar">
+          {messageBar}
+        </Col>
+      </Col>
+    );
+  }
 }
-
 
 export default MessageList;
