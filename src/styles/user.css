@@ -1,19 +1,39 @@
-.loginSection {
+.welcome-sign {
+  color: #fcfffc;
+}
+
+.login-section {
   position: fixed;
+  top: 0;
+  right: 0;
   height: 3rem;
   z-index: 1;
-  text-align: center;
+  text-align: right;
+}
+
+.welcome-header {
+  color: #fcfffc;
 }
 
 .loginSection h6:hover {
-  color: var(--secondary-color);
+  color: blue;
   cursor: pointer;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .loginSection {
     clear: both;
-    position: relative;
-    text-align: left;
+  }
+}
+
+@media (min-width: 768px) {
+  .login-section {
+    clear: both;
+  }
+}
+
+@media (max-width: 767px) {
+  .login-section {
+    text-align: right;
   }
 }
