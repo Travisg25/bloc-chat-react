@@ -9,6 +9,7 @@
   height: 3rem;
   z-index: 1;
   text-align: right;
+  cursor: pointer;
 }
 
 .welcome-header {
